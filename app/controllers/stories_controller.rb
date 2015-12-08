@@ -1,28 +1,20 @@
 class StoriesController < ApplicationController
   before_action :set_story, only: [:show, :edit, :update, :destroy]
 
-  # GET /stories
-  # GET /stories.json
   def index
     @stories = Story.all
   end
 
-  # GET /stories/1
-  # GET /stories/1.json
   def show
   end
 
-  # GET /stories/new
   def new
     @story = Story.new
   end
 
-  # GET /stories/1/edit
   def edit
   end
 
-  # POST /stories
-  # POST /stories.json
   def create
     @story = Story.new(story_params)
 
@@ -37,22 +29,23 @@ class StoriesController < ApplicationController
     end
   end
 
-  # PATCH/PUT /stories/1
-  # PATCH/PUT /stories/1.json
   def update
     respond_to do |format|
-      if @story.update(story_params)
-        format.html { redirect_to @story, notice: 'Story was successfully updated.' }
-        format.json { render :show, status: :ok, location: @story }
+      if @story.can_change_state? story_params[:state]
+        if @story.update(story_params)
+          format.html { redirect_to @story, notice: 'Story was successfully updated.' }
+          format.json { render :show, status: :ok, location: @story }
+        else
+          format.html { render :edit }
+          format.json { render json: @story.errors, status: :unprocessable_entity }
+        end
       else
-        format.html { render :edit }
+        @story.errors.add(:state, "Invalid changed state")
         format.json { render json: @story.errors, status: :unprocessable_entity }
       end
     end
   end
-
-  # DELETE /stories/1
-  # DELETE /stories/1.json
+  
   def destroy
     @story.destroy
     respond_to do |format|
@@ -67,6 +60,6 @@ class StoriesController < ApplicationController
     end
 
     def story_params
-      params.require(:story).permit :title, :string, :point, :description, :text, :state
+      params.require(:story).permit :title, :point, :description, :state
     end
 end

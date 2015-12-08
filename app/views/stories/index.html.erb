@@ -19,10 +19,8 @@
     <% @stories.each do |story| %>
       <tr>
         <td><%= story.title %></td>
-        <td><%= story.string %></td>
         <td><%= story.point %></td>
         <td><%= story.description %></td>
-        <td><%= story.text %></td>
         <td><%= story.state %></td>
         <td><%= link_to 'Show', story %></td>
         <td><%= link_to 'Edit', edit_story_path(story) %></td>
